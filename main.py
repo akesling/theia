@@ -1,8 +1,8 @@
 #!/usr/bin/python
 
-# Initial tutorial turned to (http://www.neuroforge.co.uk/index.php/getting-started-with-python-a-opencv)
-import cv
+import cv2
 import random
+import numpy as np
 
 def new_target(width, height):
     return (random.randint(1, width), random.randint(1, height))
@@ -24,36 +24,41 @@ def drift(current, target):
 
 if __name__ == '__main__':
     # Setup
-    cv.NamedWindow('a_window', cv.CV_WINDOW_AUTOSIZE)
-    webcam = cv.CaptureFromCAM(0)
-    font = cv.InitFont(cv.CV_FONT_HERSHEY_SIMPLEX, 1, 1, 0, 3, 8)
+    cv2.namedWindow('a_window', cv2.CV_WINDOW_AUTOSIZE)
+    webcam = cv2.VideoCapture(0)
 
-    image = cv.QueryFrame(webcam)
+    success, image = webcam.read()
+    if not success:
+        webcam.release()
+        exit(1)
 
-    height = image.height
-    width = image.width
+    width,height,channels = image.shape
     current_ul = (1,1)
     current_lr = (1,1)
     target_ul = (1,1)
     target_lr = (1,1)
 
-    grey = cv.CreateImage((width,height), 8, 1)
+    grey = np.zeros((width,height,1), image.dtype)
 
     while True:
         next_ul = drift(current_ul, target_ul)
         next_lr = drift(current_lr, target_lr)
 
         # Get image from webcam
-        image = cv.QueryFrame(webcam)
+        success, image = webcam.read()
+        if not success:
+            webcam.release()
+            exit(1)
 
         # Convert to grescale
-        cv.CvtColor(image, grey, cv.CV_BGR2GRAY)
+        cv2.cvtColor(image, cv2.COLOR_BGR2GRAY, grey)
 
-        cv.EqualizeHist(grey, grey)
-        cv.Rectangle(grey, next_ul, next_lr, (0,0,255), 1, 0)
-        cv.ShowImage('a_window', grey) #Show the image
+        cv2.equalizeHist(grey, grey)
+        cv2.rectangle(grey, next_ul, next_lr, (0,0,255), 1, 0)
+        cv2.imshow('a_window', grey) #Show the image
 
-        if 0 < cv.WaitKey(2):
+        if 0 < cv2.waitKey(2):
+            webcam.release()
             break
 
         if next_ul == current_ul:
