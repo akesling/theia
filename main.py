@@ -34,4 +34,3 @@ while True:
     cv.PutText(image,"Hello World!!!", tuple(current),font, 255) #Draw the text
     cv.ShowImage('a_window', image) #Show the image
     cv.WaitKey(2)
-    cv.SaveImage('image.png', image) #Saves the image
