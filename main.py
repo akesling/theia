@@ -34,7 +34,7 @@ if __name__ == '__main__':
 
     width,height,channels = image.shape
     current_ul = (1,1)
-    current_lr = (1,1)
+    current_lr = (10,10)
     target_ul = (1,1)
     target_lr = (1,1)
 
@@ -57,7 +57,7 @@ if __name__ == '__main__':
         cv2.rectangle(grey, next_ul, next_lr, (0,0,255), 1, 0)
         cv2.imshow('a_window', grey) #Show the image
 
-        if 0 < cv2.waitKey(2):
+        if 0 < cv2.waitKey(1):
             webcam.release()
             break
 
