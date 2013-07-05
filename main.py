@@ -4,20 +4,6 @@
 import cv
 import random
 
-# Setup
-cv.NamedWindow('a_window', cv.CV_WINDOW_AUTOSIZE)
-webcam=cv.CaptureFromCAM(0)
-font = cv.InitFont(cv.CV_FONT_HERSHEY_SIMPLEX, 1, 1, 0, 3, 8) #Creates a font
-
-image=cv.QueryFrame(webcam)
-
-height = image.height
-width = image.width
-current_ul = [20,20]
-current_lr = [40,40]
-target_ul = [20,20]
-target_lr = [40,40]
-
 def new_target(width, height):
     return (random.randint(1, width), random.randint(1, height))
 
@@ -36,22 +22,44 @@ def drift(current, target):
 
     return (next_x, next_y)
 
-while True:
-    next_ul = drift(current_ul, target_ul)
-    next_lr = drift(current_lr, target_lr)
+if __name__ == '__main__':
+    # Setup
+    cv.NamedWindow('a_window', cv.CV_WINDOW_AUTOSIZE)
+    webcam = cv.CaptureFromCAM(0)
+    font = cv.InitFont(cv.CV_FONT_HERSHEY_SIMPLEX, 1, 1, 0, 3, 8)
 
-    image=cv.QueryFrame(webcam)
-    #cv.PutText(image,"Hello World!!!", tuple(current),font, 255) #Draw the text
-    cv.Rectangle(image, next_ul, next_lr, (0,0,255), 1, 0)
-    cv.ShowImage('a_window', image) #Show the image
+    image = cv.QueryFrame(webcam)
 
-    if 0 < cv.WaitKey(2):
-        break
+    height = image.height
+    width = image.width
+    current_ul = (1,1)
+    current_lr = (1,1)
+    target_ul = (1,1)
+    target_lr = (1,1)
 
-    if next_ul == current_ul:
-        target_ul = new_target(width, height)
-    if next_lr == current_lr:
-        target_lr = new_target(width, height)
+    grey = cv.CreateImage((width,height), 8, 1)
 
-    current_ul = next_ul
-    current_lr = next_lr
+    while True:
+        next_ul = drift(current_ul, target_ul)
+        next_lr = drift(current_lr, target_lr)
+
+        # Get image from webcam
+        image = cv.QueryFrame(webcam)
+
+        # Convert to grescale
+        cv.CvtColor(image, grey, cv.CV_BGR2GRAY)
+
+        cv.EqualizeHist(grey, grey)
+        cv.Rectangle(grey, next_ul, next_lr, (0,0,255), 1, 0)
+        cv.ShowImage('a_window', grey) #Show the image
+
+        if 0 < cv.WaitKey(2):
+            break
+
+        if next_ul == current_ul:
+            target_ul = new_target(width, height)
+        if next_lr == current_lr:
+            target_lr = new_target(width, height)
+
+        current_ul = next_ul
+        current_lr = next_lr
