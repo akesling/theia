@@ -13,25 +13,45 @@ image=cv.QueryFrame(webcam)
 
 height = image.height
 width = image.width
-current = [1,1]
-target = [1,1]
+current_ul = [20,20]
+current_lr = [40,40]
+target_ul = [20,20]
+target_lr = [40,40]
 
-while True:
+def new_target(width, height):
+    return (random.randint(1, width), random.randint(1, height))
+
+def drift(current, target):
     xdiff = target[0] - current[0]
     ydiff = target[1] - current[1]
 
+    next_x = current[0]
+    next_y = current[1]
+
     if abs(xdiff) > 0:
-        current[0] += xdiff/abs(xdiff)
-    else:
-        target[0] = random.randint(1, width)
+        next_x += xdiff/abs(xdiff)
 
     if abs(ydiff) > 0:
-        current[1] += ydiff/abs(ydiff)
-    else:
-        target[1] = random.randint(1, height)
+        next_y += ydiff/abs(ydiff)
+
+    return (next_x, next_y)
+
+while True:
+    next_ul = drift(current_ul, target_ul)
+    next_lr = drift(current_lr, target_lr)
 
     image=cv.QueryFrame(webcam)
-    cv.PutText(image,"Hello World!!!", tuple(current),font, 255) #Draw the text
+    #cv.PutText(image,"Hello World!!!", tuple(current),font, 255) #Draw the text
+    cv.Rectangle(image, next_ul, next_lr, (0,0,255), 1, 0)
     cv.ShowImage('a_window', image) #Show the image
+
     if 0 < cv.WaitKey(2):
         break
+
+    if next_ul == current_ul:
+        target_ul = new_target(width, height)
+    if next_lr == current_lr:
+        target_lr = new_target(width, height)
+
+    current_ul = next_ul
+    current_lr = next_lr
