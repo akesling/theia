@@ -24,7 +24,7 @@ def drift(current, target):
 
 if __name__ == '__main__':
     # Setup
-    cv2.namedWindow('a_window', cv2.CV_WINDOW_AUTOSIZE)
+    cv2.namedWindow('webcam_feed', cv2.CV_WINDOW_AUTOSIZE)
     webcam = cv2.VideoCapture(0)
 
     success, image = webcam.read()
@@ -55,7 +55,7 @@ if __name__ == '__main__':
 
         cv2.equalizeHist(grey, grey)
         cv2.rectangle(grey, next_ul, next_lr, (0,0,255), 1, 0)
-        cv2.imshow('a_window', grey) #Show the image
+        cv2.imshow('webcam_feed', grey) #Show the image
 
         if 0 < cv2.waitKey(1):
             webcam.release()

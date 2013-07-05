@@ -6,7 +6,7 @@ import numpy as np
 
 if __name__ == '__main__':
     # Setup
-    cv2.namedWindow('a_window', cv2.CV_WINDOW_AUTOSIZE)
+    cv2.namedWindow('webcam_feed', cv2.CV_WINDOW_AUTOSIZE)
     webcam = cv2.VideoCapture(0)
 
     success, image = webcam.read()
@@ -29,7 +29,7 @@ if __name__ == '__main__':
         cv2.cvtColor(image, cv2.COLOR_BGR2GRAY, grey)
 
         cv2.equalizeHist(grey, grey)
-        cv2.imshow('a_window', grey) #Show the image
+        cv2.imshow('webcam_feed', grey) #Show the image
 
         if 0 < cv2.waitKey(1):
             webcam.release()
