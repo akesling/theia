@@ -33,4 +33,5 @@ while True:
     image=cv.QueryFrame(webcam)
     cv.PutText(image,"Hello World!!!", tuple(current),font, 255) #Draw the text
     cv.ShowImage('a_window', image) #Show the image
-    cv.WaitKey(2)
+    if 0 < cv.WaitKey(2):
+        break
